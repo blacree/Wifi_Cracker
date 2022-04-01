@@ -1,2 +1,2 @@
-# wifi_hacker
-Automates wifi hacking process with the use of a dictionary file containing possible passwords
+# Wifi_Cacker
+Automates wifi hacking process using linux utilities. Extract wifi passwords from window machine
