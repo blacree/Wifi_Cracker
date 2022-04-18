@@ -438,7 +438,7 @@ def enable_disable_monitor_mode():
 
         if len(available_interfaces) == 1:
             interface_name = available_interfaces[0]
-            print('\x1b[93m'+'[*] Enabling monitor mode...')
+            print('\x1b[93m'+'\n[*] Enabling monitor mode...')
             enable_monitor_mode = subprocess.run(['sudo', 'airmon-ng', 'start', interface_name], text=True, capture_output=True)
             if enable_monitor_mode.returncode == 0:
                 check_monitor_mode = True
