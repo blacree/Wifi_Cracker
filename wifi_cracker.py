@@ -1,4 +1,4 @@
-# This script automates wifi hacking process using poplular linux utilities
+# This script automates wifi cracking process using poplular linux utilities
 # Supports WPA and WPA2
 # Tested on Kali-linux
 
