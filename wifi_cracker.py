@@ -20,8 +20,6 @@ scan_performed = False
 deauth_attack_performed = False
 cracked_networks = []
 
-# Change the no of deauth packets sent to client if needed
-no_deauth_packets = 25
 
 def check_for_required_packages():
     global wifi_cracker_directory
@@ -210,7 +208,7 @@ def attack_a_network():
             selected_network_address = network_name_and_address[attackable_networks[network_no-1]]
             # selected_network_no = network_no
             try:
-                print("\n[*] Network selected: " + selected_network)
+                # print("\n[*] Network selected: " + selected_network)
                 breaker = False
             except:
                 print('\x1b[91m'+'[-] Invalid no')
@@ -238,6 +236,17 @@ def attack_a_network():
     if len(network_addresses_and_clients[selected_network_address]) == 1:
         user_selected = network_addresses_and_clients[selected_network_address][0]
         print('[*] Only one user is connected to ' + selected_network)
+        # collect no of deauth packets to send to network
+        while True:
+            no_deauth_packets = input('\x1b[93m'+"[*] Enter the no of deauth packets btwn 1-10000 to send to the network (This depends on the distance btwn you and the network): ")
+            try:
+                no_deauth_packets = int(no_deauth_packets)
+                if no_deauth_packets in range(1, 10001):
+                    break
+                else:
+                    print('\x1b[91m'+"[-] Invalid no\n")
+            except:
+                print('\x1b[91m'+"[-] Invalid no\n")
         print('\n[*] Network selected: ' + selected_network + ':' + selected_network_address)
         print('[*] User selected: ' +  user_selected)
         print('[*] Starting De-auth Attack (Press CNTRL+C to stop attack once handshake has been captured)...')
@@ -254,6 +263,16 @@ def attack_a_network():
             try:
                 user_no = int(user_no)
                 user_selected = network_addresses_and_clients[selected_network_address][user_no - 1]
+                while True:
+                    no_deauth_packets = input('\x1b[93m'+"[*] Enter the no of deauth packets btwn 1-10000 to send to the network (This depends on the distance btwn you and the network): ")
+                    try:
+                        no_deauth_packets = int(no_deauth_packets)
+                        if no_deauth_packets in range(1, 10001):
+                            break
+                        else:
+                            print('\x1b[91m'+"[-] Invalid no\n")
+                    except:
+                        print('\x1b[91m'+"[-] Invalid no\n")
                 print('\n[*] Network selected: ' + selected_network + ':' + selected_network_address)
                 print('[*] User selected: ' + user_selected)
                 print('[*] Starting De-auth Attack (Press CNTRL+C to stop attack once handshake has been captured)...')
