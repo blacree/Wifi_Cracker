@@ -449,6 +449,13 @@ def enable_disable_monitor_mode():
         for line in check_interfaces.stdout.splitlines():
             if 'phy' in line:
                 available_interfaces.append(line.split('\t')[interface_locator])
+
+        if len(available_interfaces) == 0:
+            print('\x1b[91m'+"[-] No Monitor supported wifi interfaces found")
+            print('\x1b[91m'+"[-] You can only use this tool if there is a Monitor supported wifi interface on your machine")
+            print('\x1b[93m'+"[*] Exiting...")
+            os._exit(0)
+
         print('[*] Available wifi interfaces:\n')
         interface_counter = 1
         for interface in available_interfaces:
