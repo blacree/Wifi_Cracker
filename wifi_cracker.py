@@ -452,7 +452,7 @@ def enable_disable_monitor_mode():
 
         if len(available_interfaces) == 0:
             print('\x1b[91m'+"[-] No Monitor supported wifi interfaces found")
-            print('\x1b[91m'+"[-] You can only use this tool if there is a Monitor supported wifi interface on your machine")
+            print('\x1b[91m'+"[-] You can only use this tool if your wifi card supports Monitor mode")
             print('\x1b[93m'+"[*] Exiting...")
             os._exit(0)
 
