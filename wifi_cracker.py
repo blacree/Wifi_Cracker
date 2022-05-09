@@ -527,7 +527,7 @@ def main():
     usage = '\x1b[94m' + """
     (1) SCAN/RE-SCAN NETWORKS
     (2) ATTACK A NETWORK (CAPTURE HANDSHAKE)
-    (3) CRACK CAPTURED HANDSHAKE
+    (3) CRACK CAPTURED HANDSHAKE (USES rockyou.txt BY DEFAULT)
     (4) ENABLE/DISABLE MONITOR MODE"""
     print(usage)
 
