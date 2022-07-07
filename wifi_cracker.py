@@ -31,7 +31,15 @@ def check_for_required_packages():
         pass
     else:
         print('\n[*] Installing aircrack-ng...')
-        subprocess.run(['sudo', 'apt-get', 'install', '-y', 'aircrack-ng'], text=True)
+        install_result = subprocess.run(['sudo', 'apt-get', 'install', '-y', 'aircrack-ng'], text=True)
+        if install_result.returncode == 0:
+            print('\x1b[92m' + "[+] Aircrack-ng installed")
+            print('[+] All packages installed')
+            return
+        else:
+            print('\x1b[91m'+"[-] Failed to install Aircrack-ng.")
+            exit()
+    
     print('\x1b[92m' + "[+] Aircrack-ng installed")
     print('[+] All packages installed')
 
