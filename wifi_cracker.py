@@ -1,8 +1,8 @@
+#!/usr/bin/env python3
+
 # This script automates wifi cracking process using poplular linux utilities
 # Supports WPA and WPA2
 # Tested on Kali-linux
-
-#!/usr/bin/env python
 
 import os
 import sys
